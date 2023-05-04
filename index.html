@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Training data for fine tune generator</title>
+    <link rel="stylesheet" href="https://unpkg.com/mvp.css@1.12/mvp.css"> 
+    <style>
+        pre code, pre samp,code,pre{all:initial;display:block;}
+    </style>
+    <link href="https://unpkg.com/prismjs@v1.x/themes/prism-okaidia.min.css" rel="stylesheet" />
+    <link href="https://unpkg.com/prismjs@1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
+    <link href="https://unpkg.com/prismjs@1.29.0/plugins/toolbar/prism-toolbar.min.css" rel="stylesheet" />
+
+    <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+	<script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
+	<script src="https://unpkg.com/prismjs@1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+	<script src="https://unpkg.com/prismjs@1.29.0/plugins/toolbar/prism-toolbar.min.js"></script>
+	<script src="https://unpkg.com/prismjs@1.29.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
+
+    <style>
+        form + aside{
+            margin: 0 1rem;
+            flex-grow: 3;
+        }
+        .form-aside{justify-content: flex-start;}
+    </style>
+</head>
+<body class="line-numbers" data-prismjs-copy-timeout="500">
+    <main>
+        <section>
+            <header>
+                <h2>JSONL Generator for fine-tunes on openAI</h2>
+                <p>Training data is how you teach GPT-3 what you'd like it to say</p>
+                <p>To know more about Fine-tuning, <a href="https://platform.openai.com/docs/guides/fine-tuning" target="_blank">click here</a></p>
+            </header>
+        </section>
+
+        <section class="form-aside">
+            <form>
+                <label for="prompt">Prompt</label>
+                <input type="text" id="prompt" name="prompt" size="28" placeholder="Prompt text">
+                <label for="completion">Completion</label>
+                <textarea cols="15" rows="10" id="completion" name="completion">Ideal generated text</textarea>
+                <br>
+                <button type="submit" id="add">Submit</button>
+                <button type="reset">Clear form</button>
+            </form>
+    
+            <aside>
+                <pre><code data-prismjs-copy="Copy" data-src="new-fine-tune.js" 
+                        data-download-link data-download-link-label="Download this file"
+                        class="language-json" id="jsonl"></code></pre>
+                <!-- <textarea cols="15" rows="20" id="jsonl" name="jsonl"></textarea> -->
+                
+                <button type="button" id="clear">clear JSONL</button>
+            </aside>
+        </section>
+    </main>
+
+
+    <script>
+        (()=>{
+            const btnAdd = document.getElementById("add");
+            const clearBtn = document.getElementById("clear");
+            btnAdd.addEventListener("click",function(e){
+                e.preventDefault();
+                const form = document.querySelector('form');
+                const formData = new FormData(form);
+                const completionText = " "+formData.get("completion");
+                formData.set("completion",completionText);
+                const formEntries = formData.entries();
+                const formDataStringify = JSON.stringify(Object.fromEntries(formEntries))
+                addToJSONL(formDataStringify);
+            });
+
+            clearBtn.addEventListener("click",function(e){
+                e.preventDefault();
+                const jsonl = document.getElementById("jsonl");
+                jsonl.textContent= "";
+            });
+
+            function addToJSONL(JSONFile){
+                const jsonl = document.getElementById("jsonl");
+                jsonl.textContent += JSONFile+"\n";
+                Prism.highlightAll()
+            };
+        })()
+    </script>
+</body>
+</html>
